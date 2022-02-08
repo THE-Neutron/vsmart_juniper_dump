@@ -1,0 +1,6 @@
+# Note: This file will be loaded with highest priority to override
+# other system properties, if a special ramdisk with "/force_debuggable"
+# is used and the device is unlocked.
+
+# Disable adb authentication to allow test automation on user build GSI
+ro.vendor.enablega=1
