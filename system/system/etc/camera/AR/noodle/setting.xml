@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<setting>
+
+    <face_align TrackDataPath="track_data.dat">
+    </face_align>
+	
+    <beauty>
+        <SkinSoften>65</SkinSoften>
+        <SkinBright>30</SkinBright>
+    </beauty>
+
+    <stick2d Sticker2dTemplatePath="noodle/noodle">
+        <Sticker2dMouthOpen>1</Sticker2dMouthOpen>
+    </stick2d>
+</setting>

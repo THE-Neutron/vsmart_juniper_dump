@@ -1,0 +1,153 @@
+on post-fs-data
+    mkdir /data/log/ 0775 system system
+    mkdir /data/log/vsm_logs 0775 system system
+    mkdir /data/log/tcp_logs 0775 system system
+
+    mkdir /data/log/auto_logs 0775 system log
+    chown system log /data/log/auto_logs
+    chmod 0775 /data/log/auto_logs
+
+service vsmloggerd /system/bin/vsmloggerd
+    class late_start
+    user system
+    group system log
+    oneshot
+    writepid /dev/cpuset/system-background/tasks
+
+on property:init.svc.zygote=restarting
+    restart vsmloggerd
+
+service vsmtcpdump /system/bin/tcpdump -i any -p -s 0 -C ${persist.sys.tcpdump.size} -W ${persist.sys.tcpdump.number} -w /data/log/tcp_logs/capture_tcpdump.pcap
+    class late_start
+    user root
+    group system
+    disabled
+    seclabel u:r:tcpdump:s0
+    writepid /dev/cpuset/system-background/tasks
+
+service catch_tcplog /system/bin/sh /system/etc/capture_tcpdump.sh -t
+   class late_start
+   user root
+   group system
+   disabled
+   seclabel u:r:vsmlog:s0
+   writepid /dev/cpuset/system-background/tasks
+
+on property:persist.sys.tcpdump.enable=true
+    start vsmtcpdump
+    start catch_tcplog
+
+on property:persist.sys.tcpdump.enable=false
+    stop vsmtcpdump
+    stop catch_tcplog
+
+#cnss_diag begin
+service vendor.cnss_diag /vendor/bin/cnss_diag -s -f
+    class late_start
+    user system
+    group system wifi inet diag log
+    capabilities NET_ADMIN
+    disabled
+    oneshot
+    writepid /dev/cpuset/system-background/tasks
+
+on property:persist.sys.cnss_diag.enable=true
+    start vendor.cnss_diag
+
+on property:persist.sys.cnss_diag.enable=false
+    stop vendor.cnss_diag
+#cnss_diag end
+
+service vsmlog /system/bin/vsmlog
+    class late_start
+    user root
+    group system
+    disabled
+    oneshot
+    seclabel u:r:vsmlog:s0
+    writepid /dev/cpuset/system-background/tasks
+
+service catch_aplog /system/bin/sh /system/etc/capture_tcpdump.sh -a
+   class late_start
+   user root
+   group system
+   disabled
+   seclabel u:r:vsmlog:s0
+   writepid /dev/cpuset/system-background/tasks
+
+service vsmkmsg /system/bin/vsmkmsg -r 16384 -z 10 -n 10 -f /data/log/vsm_logs/vsmkmsg.log
+    class late_start
+    user root
+    group system
+    disabled
+    seclabel u:r:vsmkmsg:s0
+    writepid /dev/cpuset/system-background/tasks
+
+service vsmlog_sdcard /system/bin/vsmlog
+    class late_start
+    user root
+    group system
+    disabled
+    seclabel u:r:vsmlog:s0
+    writepid /dev/cpuset/system-background/tasks
+
+service vsmkmsg_sdcard /system/bin/vsmkmsg -r 16384 -z 10 -n 10 -f /sdcard/log/aplog/vsmkmsg.log
+    class late_start
+    user root
+    group system
+    disabled
+    seclabel u:r:vsmkmsg:s0
+    writepid /dev/cpuset/system-background/tasks
+
+on property:persist.sys.vsmlogger.enable=true && property:persist.sys.vsmlogger.on_data=true
+    start vsmlog
+    start catch_aplog
+    start vsmkmsg
+
+on property:persist.sys.vsmlogger.enable=false && property:persist.sys.vsmlogger.on_data=true
+    stop vsmlog
+    stop catch_aplog
+    stop vsmkmsg
+
+on property:persist.sys.vsmlogger.enable=true && property:persist.sys.vsmlogger.on_data=false
+    start vsmlog_sdcard
+    start vsmkmsg_sdcard
+
+on property:persist.sys.vsmlogger.enable=false && property:persist.sys.vsmlogger.on_data=false
+    stop vsmlog_sdcard
+    stop vsmkmsg_sdcard
+
+on property:persist.sys.ril_log.enable=true
+    setprop persist.vendor.radio.ril_log_enabled 1
+    setprop persist.vendor.radio.adb_log_on 1
+    setprop persist.vendor.radio.ril_payload_on 1
+    setprop persist.vendor.radio.ril_extra_debug 1
+    setprop persist.vendor.radio.ril_log_interval 5
+
+on property:persist.sys.ril_log.enable=false
+    setprop persist.vendor.radio.ril_log_enabled 0
+    setprop persist.vendor.radio.adb_log_on 0
+    setprop persist.vendor.radio.ril_payload_on 0
+    setprop persist.vendor.radio.ril_extra_debug 0
+
+service mdlog /system/bin/diag_mdlog_system -s ${persist.sys.qxdm_log.size} -n ${persist.sys.qxdm_log.number}
+    class late_start
+    user shell
+    group system oem_2901 sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot
+    writepid /dev/cpuset/system-background/tasks
+
+service mdlog_stop /system/bin/diag_mdlog_system -k
+    class late_start
+    user shell
+    group system oem_2901 sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot
+    writepid /dev/cpuset/system-background/tasks
+
+on property:persist.sys.qxdm_log.enable=true
+    start mdlog
+
+on property:persist.sys.qxdm_log.enable=false
+    start mdlog_stop

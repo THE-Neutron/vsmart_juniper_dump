@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<setting>
+
+    <face_align TrackDataPath="/sdcard/StickerTemplate/track_data.dat">
+    </face_align>
+
+    <beauty>
+        <SkinSoften>65</SkinSoften>
+        <SkinBright>30</SkinBright>
+    </beauty>
+
+    <mask>
+        <MaskTemplateSourcePath>sweet/facemask/</MaskTemplateSourcePath>
+        <MaskConfigPath>sweet/facemask/config.xml</MaskConfigPath>
+        <MaskFaceHouseDataPath>i16facemodel.data</MaskFaceHouseDataPath>
+        <maskImg>sweet/facemask/facemask.png</maskImg>
+    </mask>
+
+
+
+
+    <stick2d Sticker2dTemplatePath="sweet/bang">
+    </stick2d>
+
+</setting>

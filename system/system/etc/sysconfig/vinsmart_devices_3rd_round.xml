@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <feature name="com.vinsmart.config.devices_3rd_round" />
+    <feature name="com.vinsmart.config.theme.version_1.0" />
+    <feature name="com.vinsmart.config.gamemode.version_1.0" />
+</config>

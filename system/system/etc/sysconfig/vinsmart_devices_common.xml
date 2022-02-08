@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <feature name="net.vsmart.config.vsmart_device" />
+</config>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<setting>
+
+    <face_align TrackDataPath="track_data.dat">
+    </face_align>
+	
+    <beauty>
+        <SkinSoften>65</SkinSoften>
+        <SkinBright>30</SkinBright>
+    </beauty>
+
+    <stick2d Sticker2dTemplatePath="earphone/earphone">
+    <Sticker2dHeadNod>1</Sticker2dHeadNod>
+    </stick2d>
+</setting>
